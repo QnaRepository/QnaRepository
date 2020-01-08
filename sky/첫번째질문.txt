@@ -1,7 +1,27 @@
-function addNumber(){
-		var number1 = document.querySelector("#number1").value;
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<script>
+	
+	function addNumber(){
+		var number1 = document.querySelector(".number1").value;
 		var number2 = document.querySelector("#number2").value; 
 		
-		var hap = parseInt("number1") + parseInt("number2");
+		var hap = parseInt(number1) + parseInt(number2);
 		alert(hap);
 	}
+
+	</script>
+	
+	<h3><input type ="text" class="number1">숫자1를 입력하세요</h3><br>
+	<h3><input type ="text" id="number2">숫자2를 입력하세요</h3>
+	<button onClick="addNumber()">덧셈 계산하기</button>
+	
+</body>
+</html>
