@@ -1,0 +1,7 @@
+function addNumber(){
+		var number1 = document.querySelector("#number1").value;
+		var number2 = document.querySelector("#number2").value; 
+		
+		var hap = parseInt("number1") + parseInt("number2");
+		alert(hap);
+	}
