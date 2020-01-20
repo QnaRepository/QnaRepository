@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+<!--		
+	<context:component-scan base-package="bum.spring.polymorphism"></context:component-scan>
+	
+	<bean id="sony" class="bum.spring.polymorphism.SonySpeaker"></bean>
+ 
+	<bean id="tv" class="bum.spring.polymorphism.LgTV" p:speaker-ref="sony" p:price="700000">
+	</bean>
+	<bean id="sony" class="bum.spring.polymorphism.SonySpeaker"/>
+	<bean id="apple" class="bum.spring.polymorphism.AppleSpeaker"/>
+-->
+ 
+<!-- 
+ 	<bean id="collectionBean" class="bum.spring.collection.CollectionBean">
+		<property name="addressList">
+			<list>
+				<value>서울시 종로구 묘동</value>
+				<value>서울시 동대문구 장안동</value>
+				<value>서울시 종로구 대학로길 7길 7</value>
+				<value>서울시 종로구 권농동</value>
+				<value>서울시 종로구 묘동</value>
+				<value>서울시 동대문구 장안동</value>
+			</list>
+		</property>
+ 	</bean>
+-->
+
+	<bean id="myLifeBean" class="bum.spring.lifecycle.MyLifeBeanImpl" init-method="init">
+		<property name="greeting"><value>Hello, </value></property>
+	</bean>
+	
+	<bean class="bum.spring.lifecycle.CustomBeanPostProcessor"></bean>
+	
+	
+	
+</beans>
