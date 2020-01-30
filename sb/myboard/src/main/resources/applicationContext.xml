@@ -3,11 +3,65 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:p="http://www.springframework.org/schema/p"
 	xmlns:context="http://www.springframework.org/schema/context"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
-<!--		
-	<context:component-scan base-package="bum.spring.polymorphism"></context:component-scan>
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-4.3.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+		
+	<context:component-scan base-package="bum.spring.web"></context:component-scan>
+	<aop:aspectj-autoproxy></aop:aspectj-autoproxy>
 	
+	<context:property-placeholder location="classpath:config/database.properties"/>
+	
+	<bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="${jdbc.driver}"/>
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}"/>
+		<property name="password" value="${jdbc.password}"/>
+	</bean>
+	
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	
+	<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	
+	<tx:advice id="txAdvice" transaction-manager="txManager">
+		<tx:attributes>
+			<tx:method name="get*" read-only="true"/>
+			<tx:method name="*"/>
+		</tx:attributes>
+	</tx:advice>
+	
+	<aop:config>
+		<aop:pointcut expression="execution(* bum.spring.web..*(..))" id="txPointcut"/>
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="txPointcut"/>
+	</aop:config>
+	
+<!--
+
+ 	<bean id="log" class="bum.spring.web.common.Log4jAdvice" />
+	<bean id="afterThrowing" class="bum.spring.web.common.AfterThrowingAdvice" />
+	<bean id="after" class="bum.spring.web.common.AfterAdvice"/>
+	<bean id="around" class="bum.spring.web.common.AroundAdvice"/>
+	<bean id="before" class="bum.spring.web.common.BeforeAdvice"/>
+	<bean id="afterReturning" class="bum.spring.web.common.AfterReturningAdvice" />
+	
+	<aop:config>
+		<aop:pointcut expression="execution(* bum.spring.web..*Impl.*(..))" id="allPointcut"/>
+		<aop:pointcut expression="execution(* bum.spring.web..*Impl.*(..))" id="getPointcut"/>
+		<aop:aspect ref="around">
+			<aop:around method="aroundLog" pointcut-ref="getPointcut" />
+		</aop:aspect>
+	</aop:config>
+	
+
 	<bean id="sony" class="bum.spring.polymorphism.SonySpeaker"></bean>
  
 	<bean id="tv" class="bum.spring.polymorphism.LgTV" p:speaker-ref="sony" p:price="700000">
@@ -31,12 +85,13 @@
  	</bean>
 -->
 
+<!--
 	<bean id="myLifeBean" class="bum.spring.lifecycle.MyLifeBeanImpl" init-method="init">
 		<property name="greeting"><value>Hello, </value></property>
 	</bean>
 	
 	<bean class="bum.spring.lifecycle.CustomBeanPostProcessor"></bean>
-	
+ -->	
 	
 	
 </beans>
