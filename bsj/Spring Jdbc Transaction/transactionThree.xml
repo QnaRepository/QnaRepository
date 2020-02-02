@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+		http://www.springframework.org/schema/aop https://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+		http://www.springframework.org/schema/jdbc https://www.springframework.org/schema/jdbc/spring-jdbc-4.3.xsd
+		http://www.springframework.org/schema/tx https://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+
+	<!-- 성공하면 모두가 성공이 되고, 하나의 기능이라도 실패하게 되면 모두 리셋이 되는 All or Nothing의 경우에 트랜젝션을 사용한다.
+		 commit, rollback의 기능이 있다. -->
+	<bean id="transactionManager" class = "org.springframework.jdbc.datasource.DataSourceTransactionManager"
+			p:dataSource-ref="dataSource"/>
+			
+	<!-- 물품(상품)조회 기능을 하기 위한 itemDao빈 객체를 생성하고 jdbcTemplate 빈 객체는 생성자를 통해 주입하기 위해서 constructior-arg 태그를 넣었다 -->
+	<bean id="itemDao" class="chris.spring.store.dao.jdbc.JdbcItemDao">
+		<constructor-arg><ref bean="jdbcTemplate"/></constructor-arg>
+	</bean>
+	<!-- 상품의 결제정보를 저장하는 기능을 가진 paymentInfoDao객체를 만든다. -->
+	<!-- applicationContext.xml파일로 부터 가지고 온 simpleJdbcInsert, namedParameterJdbcTemplate객체를 paymentInfoDao
+		 객체에 주입을 한다. -->
+	<bean id="paymentInfoDao" class="chris.spring.store.dao.jdbc.JdbcPaymentInfoDao">
+		<constructor-arg><ref bean="simpleJdbcInsert"/></constructor-arg>
+		<property name="namedJdbcTemplate" ref="namedParameterJdbcTemplate"/>
+	</bean>
+	
+	<!-- 상품의 주문내역을 저장하는 기능을 가진 purchaseOrderDao객체를 만든다. -->
+	<!-- 위의 객체와 동일하게  simpleJdbcInsert, namedParameterJdbcTemplate객체를 주입한다. -->
+	<bean id="purchaseOrderDao" class="chris.spring.store.dao.jdbc.JdbcPurchaseOrderDao">
+		<constructor-arg><ref bean="simpleJdbcInsert"/></constructor-arg>
+		<property name="namedJdbcTemplate" ref="namedParameterJdbcTemplate"/>
+	</bean>
+	
+	<!-- transactional annotation을 자동으로 찾아주는 태그이다. 간편하다~ -->
+	<tx:annotation-driven transaction-manager="transactionManager"/>
+	
+	<!-- '주문'이라는 기능은 각각 상품조회,결제확인,주문내역확인의 일련의 과정을 한 단어로 적은것과 동일하다고 볼 수 있다. -->
+	<!-- 따라서 앞서 언급한 과정을 코드로서 정의한 클래스의 빈 객체로 생성하였고, 
+		그에 필요한 객체 1) 상품조회의 기능을 가진 itemDao
+					2) 결제내역확인의 기능을 가진 paymentInfoDao
+					3) 주문내역확인의 기능을 가진 purchaseOrderDao
+		객체들을 각각 주입을 시켰다. -->
+	<bean id="placeOrderService" class="chris.spring.store.service.PlaceOrderServiceImplThree"
+			p:itemDao-ref="itemDao" p:paymentInfoDao-ref="paymentInfoDao" p:purchaseOrderDao-ref="purchaseOrderDao"/>
+
+</beans>
